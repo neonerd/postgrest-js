@@ -30,9 +30,21 @@ export interface PostgrestJsFilterParam {
 }
 
 export interface PostgrestJsGetParams {
+    /**
+     * Ordering.
+     */
     order?: PostgrestJsOrderParam
+    /**
+     * Select query.
+     */
     select?: any
+    /**
+     * Filters to be applied when getting data.
+     */
     filters?: PostgrestJsFilterParam[]
+    /**
+     * Is this request supposed to directly retrieve only a single item from collection?
+     */
     fetch?: boolean
 }
 
