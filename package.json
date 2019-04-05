@@ -4,6 +4,7 @@
   "description": "Async, functional JS bindings for PostgREST",
   "main": "index.js",
   "scripts": {
+    "build": "tsc index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.1"
   }
 }
