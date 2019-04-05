@@ -1,0 +1,23 @@
+{
+  "name": "postgrest-js",
+  "version": "0.0.1",
+  "description": "Async, functional JS bindings for PostgREST",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neonerd/postgrest-js.git"
+  },
+  "author": "Andrej Sykora <as@andrejsykora.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neonerd/postgrest-js/issues"
+  },
+  "homepage": "https://github.com/neonerd/postgrest-js#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "ramda": "^0.26.1"
+  }
+}
