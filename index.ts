@@ -2,7 +2,7 @@
 * postgrest.js
 * JavaScript client for consuming PostgREST APIs
 * Author: Andrej Sykora <as@andrejsykora.com>
-* Repository:  
+* Repository:  https://github.com/neonerd/postgrest-js
 */
 
 import axios from 'axios'
