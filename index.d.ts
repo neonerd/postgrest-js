@@ -26,7 +26,7 @@ export interface PostgrestJsGetParams {
     /**
      * Ordering.
      */
-    order?: PostgrestJsOrderParam;
+    order?: PostgrestJsOrderParam | string;
     /**
      * Select query.
      */
@@ -40,7 +40,17 @@ export interface PostgrestJsGetParams {
      */
     fetch?: boolean;
 }
+/**
+ * Returns a valid PostgrestJsConfig object that can be used in all other functions
+ * @param config Configuration parameters
+ */
 export declare function createConfig(config: PostgrestJsConfig): PostgrestJsConfig;
+/**
+ * Performs a GET request on a model in the API
+ * @param model Name of the model
+ * @param params Parameters of the request
+ * @param config PostgrestJsConfig configuration object
+ */
 export declare function get(model: string, params: PostgrestJsGetParams, config: PostgrestJsConfig): Promise<any>;
 export declare function create(model: string, payload: any, config: PostgrestJsConfig, upsert?: boolean): Promise<{
     item: any;

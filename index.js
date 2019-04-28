@@ -8,22 +8,32 @@
 exports.__esModule = true;
 var axios_1 = require("axios");
 var R = require("ramda");
+/**
+ * Returns a valid PostgrestJsConfig object that can be used in all other functions
+ * @param config Configuration parameters
+ */
 function createConfig(config) {
     return config;
 }
 exports.createConfig = createConfig;
+/**
+ * Performs a GET request on a model in the API
+ * @param model Name of the model
+ * @param params Parameters of the request
+ * @param config PostgrestJsConfig configuration object
+ */
 function get(model, params, config) {
     var path = config.endpoint + "/" + model;
     // === TODO; Handle other stuff
     var requestParams = R.pick(['order', 'select'], params);
     // === TODO: Handle vertical select
+    // === TODO: Handle order
     // === TODO: Handle filtering
     if (params.filters) {
         params.filters.map(function (f) {
             requestParams[f.column] = f.type + "." + f.value;
         });
     }
-    // === TODO: Handle order
     return axios_1["default"].get(path, {
         params: requestParams,
         headers: {
