@@ -33,7 +33,7 @@ export interface PostgrestJsGetParams {
     /**
      * Ordering.
      */
-    order?: PostgrestJsOrderParam
+    order?: PostgrestJsOrderParam | string
     /**
      * Select query.
      */
@@ -48,10 +48,20 @@ export interface PostgrestJsGetParams {
     fetch?: boolean
 }
 
+/**
+ * Returns a valid PostgrestJsConfig object that can be used in all other functions
+ * @param config Configuration parameters
+ */
 export function createConfig (config: PostgrestJsConfig) {
     return config
 }
 
+/**
+ * Performs a GET request on a model in the API
+ * @param model Name of the model
+ * @param params Parameters of the request
+ * @param config PostgrestJsConfig configuration object
+ */
 export function get (model: string, params: PostgrestJsGetParams, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/${model}`
 
@@ -60,14 +70,15 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
 
     // === TODO: Handle vertical select
 
+    // === TODO: Handle order
+
     // === TODO: Handle filtering
     if (params.filters) {
         params.filters.map((f: PostgrestJsFilterParam) => {
             requestParams[f.column] = `${f.type}.${f.value}`
         })
     }
-
-    // === TODO: Handle order
+    
     return axios.get(path, {
         params: requestParams,
         headers: {
