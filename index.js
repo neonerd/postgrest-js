@@ -53,7 +53,7 @@ function get(model, params, config) {
         return {
             items: res.data,
             pagination: {
-                total: res.headers['Content-Range'] ? res.headers['Content-Range'].split('/')[1] : undefined
+                total: res.headers['content-range'] ? res.headers['content-range'].split('/')[1] : undefined
             }
         };
     });
