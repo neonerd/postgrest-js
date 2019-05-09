@@ -66,7 +66,7 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
     const path = `${config.endpoint}/${model}`
 
     // === TODO; Handle other stuff
-    const requestParams = R.pick(['order', 'select'], params)
+    const requestParams = R.pick(['order', 'select', 'limit', 'offset'], params)
 
     // === TODO: Handle vertical select
 
