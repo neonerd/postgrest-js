@@ -46,6 +46,10 @@ export interface PostgrestJsGetParams {
      * Is this request supposed to directly retrieve only a single item from collection?
      */
     fetch?: boolean
+    /**
+     * Are we counting all the records?
+     */
+    count?: boolean
 }
 
 /**
@@ -78,14 +82,20 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
             requestParams[f.column] = `${f.type}.${f.value}`
         })
     }
+
+    const headers = {
+        'X-Requested-With': 'PostgREST-JS',
+        'Authorization': config.authorizationToken ? `Bearer ${config.authorizationToken}` : false,
+        'Content-Type': 'application/json'
+    }
+
+    if (params.count) {
+        headers['Prefer'] = 'count=exact'
+    }    
     
     return axios.get(path, {
         params: requestParams,
-        headers: {
-            'X-Requested-With': 'PostgREST-JS',
-            'Authorization': config.authorizationToken ? `Bearer ${config.authorizationToken}` : false,
-            'Content-Type': 'application/json'
-        }
+        headers
     })
     .then(res => {
         if (params.fetch) {

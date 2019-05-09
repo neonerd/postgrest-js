@@ -39,6 +39,10 @@ export interface PostgrestJsGetParams {
      * Is this request supposed to directly retrieve only a single item from collection?
      */
     fetch?: boolean;
+    /**
+     * Are we counting all the records?
+     */
+    count?: boolean;
 }
 /**
  * Returns a valid PostgrestJsConfig object that can be used in all other functions

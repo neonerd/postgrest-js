@@ -34,13 +34,17 @@ function get(model, params, config) {
             requestParams[f.column] = f.type + "." + f.value;
         });
     }
+    var headers = {
+        'X-Requested-With': 'PostgREST-JS',
+        'Authorization': config.authorizationToken ? "Bearer " + config.authorizationToken : false,
+        'Content-Type': 'application/json'
+    };
+    if (params.count) {
+        headers['Prefer'] = 'count=exact';
+    }
     return axios_1["default"].get(path, {
         params: requestParams,
-        headers: {
-            'X-Requested-With': 'PostgREST-JS',
-            'Authorization': config.authorizationToken ? "Bearer " + config.authorizationToken : false,
-            'Content-Type': 'application/json'
-        }
+        headers: headers
     })
         .then(function (res) {
         if (params.fetch) {
