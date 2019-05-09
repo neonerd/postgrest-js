@@ -25,7 +25,7 @@ exports.createConfig = createConfig;
 function get(model, params, config) {
     var path = config.endpoint + "/" + model;
     // === TODO; Handle other stuff
-    var requestParams = R.pick(['order', 'select'], params);
+    var requestParams = R.pick(['order', 'select', 'limit', 'offset'], params);
     // === TODO: Handle vertical select
     // === TODO: Handle order
     // === TODO: Handle filtering
