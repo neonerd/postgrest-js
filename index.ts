@@ -93,7 +93,10 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
         }
 
         return {
-            items: res.data
+            items: res.data,
+            pagination: {
+                total: res.headers['Content-Range'] ? res.headers['Content-Range'].split('/')[1] : undefined
+            }
         }
     })
 }

@@ -47,7 +47,10 @@ function get(model, params, config) {
             return res.data[0] ? res.data[0] : undefined;
         }
         return {
-            items: res.data
+            items: res.data,
+            pagination: {
+                total: res.headers['Content-Range'] ? res.headers['Content-Range'].split('/')[1] : undefined
+            }
         };
     });
 }
