@@ -2,11 +2,11 @@
   "name": "postgrest-js",
   "version": "0.0.10",
   "description": "Async, functional JS bindings for PostgREST",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --declaration index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
