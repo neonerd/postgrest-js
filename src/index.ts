@@ -29,7 +29,7 @@ import { update } from './lib/methods/update'
 import { remove, removeById } from './lib/methods/remove'
 import { rpc } from './lib/methods/rpc'
 
-export default {
+export {
     get,
     create,
     createAndFetch,
