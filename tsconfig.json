@@ -1,10 +1,13 @@
 {
     "compilerOptions": {
       "target": "es5",
+      "lib": ["esnext", "dom"],
       "module": "commonjs",
       "declaration": true,
       "strict": true,
-      "outDir": "dist"
+      "outDir": "dist",
+      "sourceMap": true
     },
-    "files": ["./src/index.ts"]
+    "files": ["./src/index.ts"],
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }

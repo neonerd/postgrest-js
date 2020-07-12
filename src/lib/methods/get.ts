@@ -1,9 +1,10 @@
 import axios from 'axios'
 import {pick} from 'ramda'
+import * as qs from 'qs'
 
 import {PostgrestJsConfig} from '../../index'
 import {PostgrestJsOrderParam, PostgrestJsFilterParam} from '../definitions'
-import {generatePostgrestRequestHeaders} from '../util'
+import {generatePostgrestRequestHeaders, isString, isArray} from '../util'
 
 // ===
 // === DEFINITIONS
@@ -14,25 +15,43 @@ export interface PostgrestJsGetParams {
      */
     order?: PostgrestJsOrderParam | string
     /**
-     * Select query.
+     * Vertical select query, can be either passed as raw string or an array of strings (e.g. ['*', 'foo(*)', 'bar(a,b)'])
      */
-    select?: any
+    select?: string[] | string
     /**
      * Filters to be applied when getting data.
+     * Can be passed either as a simple string or as an array of PostgrestJsFilterParam objects.
      */
-    filters?: PostgrestJsFilterParam[]
-    /**
-     * Is this request supposed to directly retrieve only a single item from collection?
-     */
-    fetch?: boolean
+    filters?: PostgrestJsFilterParam[] | string
     /**
      * Are we counting all the records?
      */
     count?: boolean
+    /**
+     * Pagination
+     */
+    limit?: number
+    offset?: number
+}
+
+export interface PostgrestJsGetWithFetchParams extends PostgrestJsGetParams {
+    /**
+     * Is this request supposed to directly retrieve only a single item from collection?
+     */
+    fetch: boolean
+}
+
+export interface PostgrestJsGetResponsePagination {
+    total?: number
+}
+
+export interface PostgrestJsGetResponse<T> {
+    items: T[],
+    pagination: PostgrestJsGetResponsePagination
 }
 
 // ===
-// === BASIC GET METHOD
+// === MAIN GET METHOD
 // ===
 
 /**
@@ -41,25 +60,51 @@ export interface PostgrestJsGetParams {
  * @param params Parameters of the request
  * @param config PostgrestJsConfig configuration object
  */
-export function get (model: string, params: PostgrestJsGetParams, config: PostgrestJsConfig) {
+export function get <T=any> (model: string, params: PostgrestJsGetWithFetchParams, config: PostgrestJsConfig): Promise<T | undefined>;
+export function get <T=any> (model: string, params: PostgrestJsGetParams, config: PostgrestJsConfig): Promise<PostgrestJsGetResponse<T>>;
+export function get (model: string, params: any, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/${model}`
 
-    // === TODO; Handle other stuff
-    const requestParams: any = pick(['order', 'select', 'limit', 'offset'], params)
+    // === Handle simple params that are just passed into request
+    // Currently handled params: limit, offset
+    const requestParams: any = pick(['limit', 'offset'], params)
 
-    // === TODO: Handle vertical select
-
-    // === TODO: Handle order
-
-    // === TODO: Handle filtering
+    // Handle filtering
     if (params.filters) {
-        params.filters.map((f: PostgrestJsFilterParam) => {
-            requestParams[f.column] = `${f.type}.${f.value}`
-        })
+        if (isArray(params.filters)) {
+            params.filters.map((f: PostgrestJsFilterParam) => {
+                requestParams[f.column] = `${f.type}.${f.value}`
+            })
+        } 
+        // We need to parse string param to inject it into requestParams
+        else {
+            const parsedFilterParam = qs.parse(params.filters)
+            Object.assign(requestParams, parsedFilterParam)
+        }
     }
 
+    // Handle vertical select
+    if (params.select) {
+        if (isArray(params.select)) {
+            requestParams['select'] = params.select.join(',')
+        } else {
+            requestParams['select'] = params.select
+        }
+    }
+
+    // Handle ordering
+    if (params.order) {
+        if (isString(params.order)) {
+            requestParams['order'] = params.order
+        } else {
+            requestParams['order'] = `${params.order.column}.${params.order.isDesc ? 'desc' : 'asc'}`
+        }
+    }
+    
+    // === Create headers
     const requestHeaders = generatePostgrestRequestHeaders(config)
 
+    // === Add exact count header if requested
     if (params.count) {
         requestHeaders['Prefer'] = 'count=exact'
     }    
@@ -69,10 +114,12 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
         headers: requestHeaders
     })
     .then(res => {
+        // If fetch was passed, return first record or undefined
         if (params.fetch) {
-            return res.data[0] ? res.data[0] : undefined
+            return (res.data[0] ? res.data[0] : undefined)
         }
 
+        // Otherwise, return collection of items
         return {
             items: res.data,
             pagination: {
@@ -80,4 +127,34 @@ export function get (model: string, params: PostgrestJsGetParams, config: Postgr
             }
         }
     })
+}
+
+// ===
+// === HELPER METHODS
+// ===
+
+/**
+ * A shortcut to fetch only one row from model. Always returns either the row or undefined.
+ * @param model 
+ * @param property 
+ * @param propertyValue 
+ * @param config 
+ */
+export function fetch <T=any> (model: string, column: string, columnValue: string, config: PostgrestJsConfig): Promise<T | undefined> {
+    return get<T>(model, {
+        fetch: true,
+        filters: [
+            {column: column, type: 'eq', value: columnValue}
+        ]
+    }, config)
+}
+
+/**
+ * A shortcut to fetch only one row from model by the "id" column. Always returns either the row or undefined.
+ * @param model 
+ * @param id 
+ * @param config 
+ */
+export function fetchById <T=any> (model: string, id: string, config: PostgrestJsConfig): Promise<T | undefined> {
+    return fetch<T>(model, 'id', id, config)
 }
