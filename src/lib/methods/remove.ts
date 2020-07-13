@@ -23,7 +23,9 @@ export function remove (model: string, filters: PostgrestJsFilterParam[], config
     })
 }
 
-// removeBy
+export function removeByColumn (mode: string, column: string, columnValue: any, config: PostgrestJsConfig) {
+
+}
 
 export function removeById (model: string, id: any, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/${model}?id=eq.${id}`

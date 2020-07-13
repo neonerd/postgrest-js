@@ -27,9 +27,6 @@ export function createConfig (config: PostgrestJsConfig): PostgrestJsConfig {
     return config
 }
 
-// Ramda functions to curry our functions
-import {curry} from 'ramda'
-
 import { get, fetch, fetchById } from './lib/methods/get'
 import { create, createAndFetch } from './lib/methods/create'
 import { update } from './lib/methods/update'

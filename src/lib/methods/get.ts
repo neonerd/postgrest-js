@@ -50,6 +50,14 @@ export interface PostgrestJsGetResponse<T> {
     pagination: PostgrestJsGetResponsePagination
 }
 
+/**
+ * Typeguard function that distinguishes PostgrestJsGetWithFetchParams object
+ * @param o 
+ */
+function isPostgrestJsGetWithFetchParams (o: any): o is PostgrestJsGetWithFetchParams {
+    return o.fetch
+}
+
 // ===
 // === MAIN GET METHOD
 // ===
@@ -62,7 +70,7 @@ export interface PostgrestJsGetResponse<T> {
  */
 export function get <T=any> (model: string, params: PostgrestJsGetWithFetchParams, config: PostgrestJsConfig): Promise<T | undefined>;
 export function get <T=any> (model: string, params: PostgrestJsGetParams, config: PostgrestJsConfig): Promise<PostgrestJsGetResponse<T>>;
-export function get (model: string, params: any, config: PostgrestJsConfig) {
+export function get (model: string, params: PostgrestJsGetWithFetchParams | PostgrestJsGetParams, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/${model}`
 
     // === Handle simple params that are just passed into request
@@ -115,7 +123,7 @@ export function get (model: string, params: any, config: PostgrestJsConfig) {
     })
     .then(res => {
         // If fetch was passed, return first record or undefined
-        if (params.fetch) {
+        if (isPostgrestJsGetWithFetchParams(params)) {
             return (res.data[0] ? res.data[0] : undefined)
         }
 
