@@ -14,7 +14,10 @@ export function generatePostgrestRequestHeaders (config: PostgrestJsConfig): { [
     headers['X-Requested-With'] = 'PostgREST-JS'
     headers['Content-Type'] = 'application/json'
 
-    headers['Authorization'] = `Bearer ${config.authorizationToken}`
+    // Optional parameters
+    if (config.authorizationToken) {
+        headers['Authorization'] = `Bearer ${config.authorizationToken}`
+    }
 
     return headers
 }
