@@ -3,7 +3,7 @@ import {pick} from 'ramda'
 import * as qs from 'qs'
 
 import {PostgrestJsConfig} from '../../index'
-import {PostgrestJsOrderParam, PostgrestJsFilterParam} from '../definitions'
+import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam} from '../definitions'
 import {generatePostgrestRequestHeaders, isString, isArray} from '../util'
 
 // ===
@@ -58,6 +58,36 @@ function isPostgrestJsGetWithFetchParams (o: any): o is PostgrestJsGetWithFetchP
     return o.fetch
 }
 
+/**
+ * Typeguard function that distinguishes PostgrestJsSelectParam object
+ * @param o 
+ */
+function isPostgrestJsSelectParam (o: any): o is PostgrestJsSelectParam {
+    return !!o.identifier
+}
+
+function transformPostgrestJsSelectParamToString (p: PostgrestJsSelectParam | string): string {
+    if (isPostgrestJsSelectParam(p)) {
+        // Parse the children recursively
+        const childrenStr: string[] = []
+        for (const cp of p.children) {
+            childrenStr.push(transformPostgrestJsSelectParamToString(cp))
+        }
+        // Final string
+        const finalStr = [
+            p.alias ? `${p.alias}:` : '',
+            p.identifier,
+            '(',
+            childrenStr.join(','),
+            ')'
+        ]
+        // Return
+        return finalStr.join('')
+    } else {
+        return `${p}`
+    }
+}
+
 // ===
 // === MAIN GET METHOD
 // ===
@@ -94,7 +124,18 @@ export function get (model: string, params: PostgrestJsGetWithFetchParams | Post
     // Handle vertical select
     if (params.select) {
         if (isArray(params.select)) {
-            requestParams['select'] = params.select.join(',')
+            const selectParams: string[] = []
+
+            // Build the select params string by parsing each array element
+            params.select.map(p => {
+                if (isPostgrestJsSelectParam(p)) {
+                    selectParams.push(transformPostgrestJsSelectParamToString(p))
+                } else {
+                    selectParams.push(p)
+                }
+            })
+
+            requestParams['select'] = selectParams.join(',')
         } else {
             requestParams['select'] = params.select
         }

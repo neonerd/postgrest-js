@@ -10,6 +10,6 @@ export interface PostgrestJsFilterParam {
 
 export interface PostgrestJsSelectParam {
     identifier: string
-    alias?: string
     children: string[] | PostgrestJsSelectParam[]
+    alias?: string    
 }
