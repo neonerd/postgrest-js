@@ -37,6 +37,14 @@ const axiosGetMockImplementation = (path: string, opts: any) => {
     if (path == 'localhost:3000/test') {
         const response: any = clone(testingResponse)
 
+        // Select
+        
+
+        // Filtering
+
+        // Ordering
+
+        // Limit and Offset
         let limit = opts.params['limit'] || 10
         let offset = opts.params['offset'] || 0
 
@@ -52,8 +60,6 @@ const axiosGetMockImplementation = (path: string, opts: any) => {
         throw new Error('Axios Get Mock: Unknown endpoint!')
     }
 }
-
-
 
 test('should get data', () => { 
     //@ts-ignore

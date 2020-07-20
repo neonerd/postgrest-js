@@ -13,11 +13,11 @@ export interface PostgrestJsGetParams {
     /**
      * Ordering.
      */
-    order?: PostgrestJsOrderParam | string
+    order?: PostgrestJsOrderParam | PostgrestJsOrderParam[] | string | string[]
     /**
      * Vertical select query, can be either passed as raw string or an array of strings (e.g. ['*', 'foo(*)', 'bar(a,b)'])
      */
-    select?: string[] | string
+    select?: PostgrestJsSelectParam | string[] | string
     /**
      * Filters to be applied when getting data.
      * Can be passed either as a simple string or as an array of PostgrestJsFilterParam objects.
@@ -66,6 +66,18 @@ function isPostgrestJsSelectParam (o: any): o is PostgrestJsSelectParam {
     return !!o.identifier
 }
 
+/**
+ * Typeguard function that distinguishes PostgrestJsOrderParam object
+ * @param o 
+ */
+function isPostgrestJsOrderParam (o: any): o is PostgrestJsOrderParam {
+    return !!o.column
+}
+
+/**
+ * Transforms a PostgrestJsSelectParam into its PostgREST-readable string representation
+ * @param p 
+ */
 function transformPostgrestJsSelectParamToString (p: PostgrestJsSelectParam | string): string {
     if (isPostgrestJsSelectParam(p)) {
         // Parse the children recursively
@@ -143,11 +155,25 @@ export function get (model: string, params: PostgrestJsGetWithFetchParams | Post
 
     // Handle ordering
     if (params.order) {
-        if (isString(params.order)) {
-            requestParams['order'] = params.order
+        const orderStrParts = []
+
+        if (isArray(params.order)) {
+            for (const e of params.order) {
+                if (isPostgrestJsOrderParam(e)) {
+                    orderStrParts.push(`${e.column}.${e.isDesc ? 'desc' : 'asc'}`)
+                } else {
+                    orderStrParts.push(e)
+                }
+            }
         } else {
-            requestParams['order'] = `${params.order.column}.${params.order.isDesc ? 'desc' : 'asc'}`
-        }
+            if (isPostgrestJsOrderParam(params.order)) {
+                orderStrParts.push(`${params.order.column}.${params.order.isDesc ? 'desc' : 'asc'}`)
+            } else {
+                orderStrParts.push(params.order)
+            }
+        }        
+
+        requestParams['order'] = orderStrParts.join(',')
     }
     
     // === Create headers

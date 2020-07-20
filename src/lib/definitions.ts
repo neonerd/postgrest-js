@@ -1,7 +1,8 @@
 export interface PostgrestJsOrderParam {
     column: string
-    isDesc: boolean
+    isDesc?: boolean
 }
+
 export interface PostgrestJsFilterParam {
     column: string
     type: string
