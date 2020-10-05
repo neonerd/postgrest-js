@@ -4,9 +4,9 @@ Heavy WIP, consider yourself warned.
 
 ## What is PostgREST.js?
 
-PostgREST.js is a client library for consuming PostgREST APIs. It does not try to be anything else, it simply provides a set of functions and TypeScript interfaces to make your life easier when working with PostgREST on the frontend. 
+PostgREST.js is a client library for consuming PostgREST APIs. It provides a set of functions and TypeScript interfaces to make your life easier when working with PostgREST in web browsers on Node.JS.
 
-There is no ORM or any kind of advanced coding pattern used.
+PostgREST.js is not an ORM, nor does it provide any specific entity mapping pattern. You have to provide types for your entities yourself.
 
 ## Installation
 
