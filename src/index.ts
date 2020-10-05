@@ -43,8 +43,8 @@ export {
     createAndFetch,
     // Updating data
     update,
-    remove,
     // Removing data
+    remove,
     removeById,
     // Calling functions
     rpc

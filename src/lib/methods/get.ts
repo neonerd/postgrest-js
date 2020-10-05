@@ -3,8 +3,8 @@ import {pick} from 'ramda'
 import * as qs from 'qs'
 
 import {PostgrestJsConfig} from '../../index'
-import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam} from '../definitions'
-import {generatePostgrestRequestHeaders, isString, isArray} from '../util'
+import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam, PostgrestJsFilterGroup} from '../definitions'
+import {generatePostgrestRequestHeaders, isString, isArray, generatePostgrestFilterProperties} from '../util'
 
 // ===
 // === DEFINITIONS
@@ -22,7 +22,7 @@ export interface PostgrestJsGetParams {
      * Filters to be applied when getting data.
      * Can be passed either as a simple string or as an array of PostgrestJsFilterParam objects.
      */
-    filters?: PostgrestJsFilterParam[] | string
+    filters?: Array<PostgrestJsFilterParam | PostgrestJsFilterGroup> | string
     /**
      * Are we counting all the records?
      */
@@ -121,12 +121,14 @@ export function get (model: string, params: PostgrestJsGetWithFetchParams | Post
 
     // Handle filtering
     if (params.filters) {
+        // If this is an Array of filters / groups, process it
         if (isArray(params.filters)) {
-            params.filters.map((f: PostgrestJsFilterParam) => {
-                requestParams[f.column] = `${f.type}.${f.value}`
+            const filterMap = generatePostgrestFilterProperties(params.filters)
+            Object.keys(filterMap).map(key => {
+                requestParams[key] = filterMap[key]
             })
         } 
-        // We need to parse string param to inject it into requestParams
+        // Otherwise, we need to parse string param to inject it into requestParams
         else {
             const parsedFilterParam = qs.parse(params.filters)
             Object.assign(requestParams, parsedFilterParam)

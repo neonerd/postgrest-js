@@ -9,6 +9,11 @@ export interface PostgrestJsFilterParam {
     value: string
 }
 
+export interface PostgrestJsFilterGroup {
+    operation: 'and' | 'or'
+    params: PostgrestJsFilterParam[]
+}
+
 export interface PostgrestJsSelectParam {
     identifier: string
     children: string[] | PostgrestJsSelectParam[]

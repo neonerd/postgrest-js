@@ -1,15 +1,18 @@
 import axios from 'axios'
 
 import {PostgrestJsConfig} from '../../index'
-import {PostgrestJsFilterParam} from '../definitions'
-import {generatePostgrestRequestHeaders} from '../util'
+import {PostgrestJsFilterGroup, PostgrestJsFilterParam} from '../definitions'
+import {generatePostgrestRequestHeaders, generatePostgrestFilterProperties} from '../util'
 
-export function remove (model: string, filters: PostgrestJsFilterParam[], config: PostgrestJsConfig) {
+export function remove (model: string, filters: Array<PostgrestJsFilterParam | PostgrestJsFilterGroup>, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/${model}`
 
     const requestParams: any = {}
-    filters.map((f: PostgrestJsFilterParam) => {
-        requestParams[f.column] = `${f.type}.${f.value}`
+    
+    // Process filters
+    const filterMap = generatePostgrestFilterProperties(filters)
+    Object.keys(filterMap).map(key => {
+        requestParams[key] = filterMap[key]
     })
 
     return axios.delete(path, {
@@ -23,24 +26,33 @@ export function remove (model: string, filters: PostgrestJsFilterParam[], config
     })
 }
 
-export function removeByColumn (mode: string, column: string, columnValue: any, config: PostgrestJsConfig) {
-
+// ===
+// === Helpers functions
+// ===
+/**
+ * Removes a specific model by column value
+ * @param model 
+ * @param column 
+ * @param columnValue 
+ * @param config 
+ */
+export function removeByColumn (model: string, column: string, columnValue: any, config: PostgrestJsConfig) {
+    return remove(model, [
+        {
+            column: column,
+            type: 'eq',
+            value: columnValue
+        }
+    ], config)
 }
 
+/**
+ * Removes a specific model by 'id' column
+ * @param model 
+ * @param id 
+ * @param config 
+ */
 export function removeById (model: string, id: any, config: PostgrestJsConfig) {
-    const path = `${config.endpoint}/${model}?id=eq.${id}`
-
-    return axios.delete(path, {
-        headers: {
-            'X-Requested-With': 'PostgREST-JS',
-            'Authorization': `Bearer ${config.authorizationToken}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(res => {
-        return {
-            item: res.data
-        }
-    })
+    return removeByColumn(model, 'id', id, config)
 }
 
