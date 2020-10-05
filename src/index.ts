@@ -29,8 +29,8 @@ export function createConfig (config: PostgrestJsConfig): PostgrestJsConfig {
 
 import { get, fetch, fetchById } from './lib/methods/get'
 import { create, createAndFetch } from './lib/methods/create'
-import { update } from './lib/methods/update'
-import { remove, removeById } from './lib/methods/remove'
+import { update, updateByColumn, updateById } from './lib/methods/update'
+import { remove, removeByColumn, removeById } from './lib/methods/remove'
 import { rpc } from './lib/methods/rpc'
 
 export {
@@ -43,8 +43,11 @@ export {
     createAndFetch,
     // Updating data
     update,
+    updateByColumn,
+    updateById,
     // Removing data
     remove,
+    removeByColumn,
     removeById,
     // Calling functions
     rpc
