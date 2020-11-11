@@ -62,3 +62,4 @@ typings/
 
 # distribution
 /dist
+/build
