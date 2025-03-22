@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {pick} from 'ramda'
+import { pick } from 'rambda'
 import * as qs from 'qs'
 
 import {PostgrestJsConfig} from '../../index'

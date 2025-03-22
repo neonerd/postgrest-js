@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {clone} from 'ramda'
+import { clone } from 'rambda'
 
 jest.mock('axios')
 
