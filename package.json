@@ -1,6 +1,6 @@
 {
   "name": "postgrest-js",
-  "version": "1.0.0-rc2",
+  "version": "2.0.0-rc1",
   "description": "Async, functional JS bindings for PostgREST",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
