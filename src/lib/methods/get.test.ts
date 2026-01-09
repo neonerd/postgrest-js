@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { clone } from 'rambda'
 
 jest.mock('axios')
 
@@ -35,7 +34,10 @@ const postgrestConfig = createConfig({endpoint: 'localhost:3000'})
 
 const axiosGetMockImplementation = (path: string, opts: any) => {
     if (path == 'localhost:3000/test') {
-        const response: any = clone(testingResponse)
+        const response: any = {
+            data: testingData,
+            headers: {}
+        }
 
         // Select
         

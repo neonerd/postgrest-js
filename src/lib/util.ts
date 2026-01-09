@@ -2,6 +2,19 @@ import { PostgrestJsConfig } from ".."
 import { PostgrestJsFilterGroup, PostgrestJsFilterParam } from './definitions'
 
 // ===
+// === Object utilities
+// ===
+export function pick<T extends object, K extends keyof T>(keys: readonly K[], obj: T): Pick<T, K> {
+    const result = {} as Pick<T, K>
+    for (const key of keys) {
+        if (key in obj) {
+            result[key] = obj[key]
+        }
+    }
+    return result
+}
+
+// ===
 // === Typeguards
 // ===
 export function isString (v: any): v is string {

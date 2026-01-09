@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { pick } from 'rambda'
 import * as qs from 'qs'
 
+import { pick } from '../util'
 import {PostgrestJsConfig} from '../../index'
 import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam, PostgrestJsFilterGroup} from '../definitions'
 import {generatePostgrestRequestHeaders, isString, isArray, generatePostgrestFilterProperties} from '../util'
