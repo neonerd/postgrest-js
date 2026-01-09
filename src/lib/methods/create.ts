@@ -33,6 +33,6 @@ export function createAndFetch (model: string, payload: any, config: PostgrestJs
         headers: requestHeaders
     })
     .then(res => {
-        res.data[0]
+        return res.data[0]
     })
 }
