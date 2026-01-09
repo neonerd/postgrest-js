@@ -33,6 +33,8 @@ import { update, updateByColumn, updateById } from './lib/methods/update'
 import { remove, removeByColumn, removeById } from './lib/methods/remove'
 import { rpc } from './lib/methods/rpc'
 
+import { PostgrestJsGetParams, PostgrestJsGetWithFetchParams } from './lib/methods/get'
+
 export {
     // Getting data
     get,
@@ -50,6 +52,9 @@ export {
     removeByColumn,
     removeById,
     // Calling functions
-    rpc
+    rpc,
+    // Types
+    PostgrestJsGetParams,
+    PostgrestJsGetWithFetchParams
 }
 
