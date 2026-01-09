@@ -1,8 +1,12 @@
-import axios from 'axios'
+import axios, { AxiosResponseHeaders } from 'axios'
 
 import {PostgrestJsConfig} from '../../index'
 import { generatePostgrestRequestHeaders } from '../util'
 
+interface RpcReturn {
+    response: any
+    headers: AxiosResponseHeaders
+}
 export function rpc (name: string, payload: any, config: PostgrestJsConfig) {
     const path = `${config.endpoint}/rpc/${name}`
     const requestHeaders = generatePostgrestRequestHeaders(config)
@@ -13,7 +17,7 @@ export function rpc (name: string, payload: any, config: PostgrestJsConfig) {
     .then(res => {
         return {
             response: res.data,
-            headers: res.headers
+            headers: res.headers as AxiosResponseHeaders
         }
     })
 }

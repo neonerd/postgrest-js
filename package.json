@@ -1,6 +1,6 @@
 {
   "name": "postgrest-js",
-  "version": "3.0.0-rc3",
+  "version": "3.1.0",
   "description": "Async, functional JS bindings for PostgREST",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/neonerd/postgrest-js#readme",
   "dependencies": {
-    "axios": "^0.29.0",
+    "axios": "^1.13.2",
     "qs": "^6.9.3",
     "rambda": "^9.4.2"
   },

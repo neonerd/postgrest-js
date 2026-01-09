@@ -1,9 +1,13 @@
-import axios from 'axios'
+import axios, { AxiosResponseHeaders } from 'axios'
 
 import {PostgrestJsConfig} from '../../index'
 import {generatePostgrestRequestHeaders} from '../util'
 
-export function create (model: string, payload: any, config: PostgrestJsConfig, upsert: boolean = false) {
+interface CreateReturn {
+    item: any
+    headers: AxiosResponseHeaders
+}
+export function create (model: string, payload: any, config: PostgrestJsConfig, upsert: boolean = false): Promise<CreateReturn> {
     const path = `${config.endpoint}/${model}`
     const requestHeaders = generatePostgrestRequestHeaders(config)
 
@@ -18,7 +22,7 @@ export function create (model: string, payload: any, config: PostgrestJsConfig, 
     .then(res => {
         return {
             item: res.data,
-            headers: res.headers
+            headers: res.headers as AxiosResponseHeaders
         }
     })
 }
