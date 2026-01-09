@@ -25,15 +25,14 @@ export function create (model: string, payload: any, config: PostgrestJsConfig, 
 
 export function createAndFetch (model: string, payload: any, config: PostgrestJsConfig, upsert: boolean = false) {
     const requestHeaders = generatePostgrestRequestHeaders(config)
+    const path = `${config.endpoint}/${model}`
 
-    return create(model, payload, config, upsert)
-        .then(res => {
-            const path = `${config.endpoint}${res.headers.location}`
-            return axios.get(path, {
-                headers: requestHeaders
-            })
-        })
-        .then(res => {
-            return res.data[0]
-        })
+    requestHeaders['Prefer'] = 'return=representation'
+
+    return axios.post(path, payload, {
+        headers: requestHeaders
+    })
+    .then(res => {
+        res.data[0]
+    })
 }
