@@ -34,6 +34,7 @@ import { remove, removeByColumn, removeById } from './lib/methods/remove'
 import { rpc } from './lib/methods/rpc'
 
 import { PostgrestJsGetParams, PostgrestJsGetWithFetchParams } from './lib/methods/get'
+import { PostgrestJsCountParam } from './lib/definitions'
 
 export {
     // Getting data
@@ -55,6 +56,7 @@ export {
     rpc,
     // Types
     PostgrestJsGetParams,
-    PostgrestJsGetWithFetchParams
+    PostgrestJsGetWithFetchParams,
+    PostgrestJsCountParam
 }
 

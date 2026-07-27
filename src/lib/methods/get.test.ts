@@ -53,6 +53,10 @@ const axiosGetMockImplementation = (path: string, opts: any) => {
         if (opts.headers['Prefer'] == 'count=exact') {
             response.headers['content-range'] = `${offset+1}-${offset+limit}/${testingData.length}`
         }
+        // Planned / estimated counts are approximate, so the mock returns a different number
+        else if (opts.headers['Prefer'] == 'count=planned' || opts.headers['Prefer'] == 'count=estimated') {
+            response.headers['content-range'] = `${offset+1}-${offset+limit}/1000`
+        }
 
         response.data = response.data.slice(offset, offset+limit)
 
@@ -84,6 +88,37 @@ test('should get only one row if using fetch', () => {
     })
 })
 
+test('should limit the query to a single row when using fetch', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+    //@ts-ignore
+    axios.get.mockClear()
+
+    return get('test', {
+        fetch: true
+    }, postgrestConfig).then(res => {
+        //@ts-ignore
+        expect(axios.get.mock.calls[0][1].params['limit']).toEqual(1)
+        expect(res).toEqual(testingData[0])
+    })
+})
+
+test('should override a passed limit when using fetch', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+    //@ts-ignore
+    axios.get.mockClear()
+
+    return get('test', {
+        fetch: true,
+        limit: 10
+    }, postgrestConfig).then(res => {
+        //@ts-ignore
+        expect(axios.get.mock.calls[0][1].params['limit']).toEqual(1)
+        expect(res).toEqual(testingData[0])
+    })
+})
+
 test('should use count-exact header when passing count', () => {
     //@ts-ignore
     axios.get.mockImplementation(axiosGetMockImplementation)
@@ -92,6 +127,50 @@ test('should use count-exact header when passing count', () => {
         count: true
     }, postgrestConfig).then(res => {
         expect(res.pagination.total).toEqual('17')
+    })
+})
+
+test('should use count-exact header when passing count as "exact"', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+
+    return get('test', {
+        count: 'exact'
+    }, postgrestConfig).then(res => {
+        expect(res.pagination.total).toEqual('17')
+    })
+})
+
+test('should use count-planned header when passing count as "planned"', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+
+    return get('test', {
+        count: 'planned'
+    }, postgrestConfig).then(res => {
+        expect(res.pagination.total).toEqual('1000')
+    })
+})
+
+test('should use count-estimated header when passing count as "estimated"', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+
+    return get('test', {
+        count: 'estimated'
+    }, postgrestConfig).then(res => {
+        expect(res.pagination.total).toEqual('1000')
+    })
+})
+
+test('should not send a count header when count is false', () => {
+    //@ts-ignore
+    axios.get.mockImplementation(axiosGetMockImplementation)
+
+    return get('test', {
+        count: false
+    }, postgrestConfig).then(res => {
+        expect(res.pagination.total).toBeUndefined()
     })
 })
 

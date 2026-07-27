@@ -14,6 +14,12 @@ export interface PostgrestJsFilterGroup {
     params: PostgrestJsFilterParam[]
 }
 
+/**
+ * Type of count PostgREST should perform when returning the Content-Range header.
+ * See https://docs.postgrest.org/en/latest/references/api/pagination_count.html
+ */
+export type PostgrestJsCountParam = 'exact' | 'planned' | 'estimated'
+
 export interface PostgrestJsSelectParam {
     identifier: string
     children: string[] | PostgrestJsSelectParam[]

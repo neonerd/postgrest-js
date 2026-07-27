@@ -3,7 +3,7 @@ import * as qs from 'qs'
 
 import { pick } from '../util'
 import {PostgrestJsConfig} from '../../index'
-import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam, PostgrestJsFilterGroup} from '../definitions'
+import {PostgrestJsOrderParam, PostgrestJsFilterParam, PostgrestJsSelectParam, PostgrestJsFilterGroup, PostgrestJsCountParam} from '../definitions'
 import {generatePostgrestRequestHeaders, isString, isArray, generatePostgrestFilterProperties} from '../util'
 
 // ===
@@ -25,8 +25,11 @@ export interface PostgrestJsGetParams {
     filters?: Array<PostgrestJsFilterParam | PostgrestJsFilterGroup> | string
     /**
      * Are we counting all the records?
+     * Pass `true` (or 'exact') to get an exact count, or 'planned' / 'estimated' to get
+     * the cheaper approximate counts.
+     * See https://docs.postgrest.org/en/latest/references/api/pagination_count.html
      */
-    count?: boolean
+    count?: boolean | PostgrestJsCountParam
     /**
      * Pagination
      */
@@ -119,6 +122,12 @@ export function get (model: string, params: PostgrestJsGetWithFetchParams | Post
     // Currently handled params: limit, offset
     const requestParams: any = pick(['limit', 'offset'], params)
 
+    // Only a single row is ever returned when fetching, so ask PostgREST for just one
+    // and let it optimize the generated SQL query
+    if (isPostgrestJsGetWithFetchParams(params)) {
+        requestParams['limit'] = 1
+    }
+
     // Handle filtering
     if (params.filters) {
         // If this is an Array of filters / groups, process it
@@ -181,10 +190,11 @@ export function get (model: string, params: PostgrestJsGetWithFetchParams | Post
     // === Create headers
     const requestHeaders = generatePostgrestRequestHeaders(config)
 
-    // === Add exact count header if requested
+    // === Add count header if requested
+    // A boolean `true` keeps the original behaviour and asks for an exact count
     if (params.count) {
-        requestHeaders['Prefer'] = 'count=exact'
-    }    
+        requestHeaders['Prefer'] = `count=${isString(params.count) ? params.count : 'exact'}`
+    }
     
     return axios.get(path, {
         params: requestParams,
